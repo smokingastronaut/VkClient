@@ -50,7 +50,9 @@ public class LoginActivity extends AppCompatActivity implements VKCallback<VKAcc
     }
 
     private void login() {
-        VKSdk.login(this, VKScope.WALL);
+        VKSdk.login(this,
+                VKScope.WALL,
+                VKScope.OFFLINE);
     }
 
     private void saveAccessToken(String token) {
