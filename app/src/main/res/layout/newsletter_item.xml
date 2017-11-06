@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingEnd="@dimen/newsletter_padding"
+    android:paddingLeft="@dimen/newsletter_padding"
+    android:paddingRight="@dimen/newsletter_padding"
+    android:paddingStart="@dimen/newsletter_padding">
+
+    <ImageView
+        android:id="@+id/avatar_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/content_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/avatar_image_view"
+        android:layout_toRightOf="@id/avatar_image_view"
+        android:textColor="@color/color_text_primary"
+        android:textSize="@dimen/post_content_text_size" />
+
+    <TextView
+        android:id="@+id/date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/content_text_view"
+        android:layout_marginTop="@dimen/post_date_margin_top"
+        android:textColor="@color/color_text_secondary"
+        android:textSize="@dimen/post_date_text_size" />
+
+</RelativeLayout>
