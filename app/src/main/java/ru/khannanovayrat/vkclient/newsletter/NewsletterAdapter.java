@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,8 @@ public class NewsletterAdapter extends RecyclerView.Adapter<NewsletterAdapter.Po
         PostEntity postEntity = mData.get(position);
         holder.mContentTextView.setText(postEntity.getContent());
         holder.mDateTextView.setText(postEntity.getDate());
-        holder.mAvatarImageView.setImageDrawable(postEntity.getAvatar());
+        holder.mNameTextView.setText(postEntity.getAuthor());
+        Picasso.with(holder.mAvatarImageView.getContext()).load(postEntity.getAvatarUrl()).into(holder.mAvatarImageView);
     }
 
     @Override
@@ -58,12 +61,14 @@ public class NewsletterAdapter extends RecyclerView.Adapter<NewsletterAdapter.Po
         ImageView mAvatarImageView;
         TextView mContentTextView;
         TextView mDateTextView;
+        TextView mNameTextView;
 
         public PostViewHolder(View itemView) {
             super(itemView);
             mAvatarImageView = itemView.findViewById(R.id.avatar_image_view);
             mContentTextView = itemView.findViewById(R.id.content_text_view);
             mDateTextView = itemView.findViewById(R.id.date_text_view);
+            mNameTextView = itemView.findViewById(R.id.name_text_view);
         }
     }
 }

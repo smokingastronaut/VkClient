@@ -2,8 +2,11 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="post_content_text_size">12sp</dimen>
     <dimen name="post_date_text_size">10sp</dimen>
+    <dimen name="post_author_text_size">16sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="newsletter_padding">16dp</dimen>
     <dimen name="post_date_margin_top">10dp</dimen>
+    <dimen name="margin_10dp">10dp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
 </resources>

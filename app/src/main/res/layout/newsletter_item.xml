@@ -1,35 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingEnd="@dimen/newsletter_padding"
     android:paddingLeft="@dimen/newsletter_padding"
     android:paddingRight="@dimen/newsletter_padding"
-    android:paddingStart="@dimen/newsletter_padding">
+    android:paddingStart="@dimen/newsletter_padding"
+    android:paddingTop="@dimen/newsletter_padding">
 
     <ImageView
         android:id="@+id/avatar_image_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:src="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_8dp"
+        android:layout_marginStart="@dimen/margin_8dp"
+        android:layout_toEndOf="@+id/avatar_image_view"
+        android:layout_toRightOf="@+id/avatar_image_view"
+        android:gravity="top"
+        android:textSize="@dimen/post_author_text_size"
+        tools:text="Author" />
 
     <TextView
         android:id="@+id/content_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/avatar_image_view"
-        android:layout_toRightOf="@id/avatar_image_view"
+        android:layout_below="@id/avatar_image_view"
+        android:layout_marginTop="@dimen/margin_10dp"
+        android:linksClickable="true"
+        android:autoLink="web"
         android:textColor="@color/color_text_primary"
-        android:textSize="@dimen/post_content_text_size" />
+        android:textSize="@dimen/post_content_text_size"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
 
     <TextView
         android:id="@+id/date_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/content_text_view"
-        android:layout_marginTop="@dimen/post_date_margin_top"
+        android:layout_below="@id/name_text_view"
+        android:layout_marginLeft="@dimen/margin_8dp"
+        android:layout_toEndOf="@id/avatar_image_view"
+        android:layout_toRightOf="@id/avatar_image_view"
         android:textColor="@color/color_text_secondary"
-        android:textSize="@dimen/post_date_text_size" />
+        android:textSize="@dimen/post_date_text_size"
+        tools:text="21:45" />
 
 </RelativeLayout>

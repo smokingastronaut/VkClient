@@ -24,7 +24,11 @@ import io.reactivex.disposables.Disposable;
 import ru.khannanovayrat.vkclient.R;
 import ru.khannanovayrat.vkclient.auth.LoginActivity;
 import ru.khannanovayrat.vkclient.network.ApiAsyncManager;
+import ru.khannanovayrat.vkclient.network.VkGroupProfile;
+import ru.khannanovayrat.vkclient.network.VkProfile;
+import ru.khannanovayrat.vkclient.network.VkUserProfile;
 import ru.khannanovayrat.vkclient.network.feed.VkFeedPost;
+import ru.khannanovayrat.vkclient.network.feed.VkNewsFeedResponse;
 import ru.khannanovayrat.vkclient.network.feed.VkNewsFeedResponseWrapper;
 import ru.khannanovayrat.vkclient.util.PreferenceUtils;
 
@@ -121,7 +125,7 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
             public void onNext(VkNewsFeedResponseWrapper vkNewsFeedResponseWrapper) {
                 if (vkNewsFeedResponseWrapper != null && vkNewsFeedResponseWrapper.getResponse() != null) {
                     mNextPostId = vkNewsFeedResponseWrapper.getResponse().getNextPostId();
-                    fillAdapter(vkNewsFeedResponseWrapper.getResponse().getPosts(), true);
+                    fillAdapter(vkNewsFeedResponseWrapper.getResponse(), true);
                 }
             }
 
@@ -153,7 +157,7 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
                     public void onNext(VkNewsFeedResponseWrapper vkNewsFeedResponseWrapper) {
                         if (vkNewsFeedResponseWrapper != null && vkNewsFeedResponseWrapper.getResponse() != null) {
                             mNextPostId = vkNewsFeedResponseWrapper.getResponse().getNextPostId();
-                            fillAdapter(vkNewsFeedResponseWrapper.getResponse().getPosts(), false);
+                            fillAdapter(vkNewsFeedResponseWrapper.getResponse(), false);
                         }
                     }
 
@@ -169,17 +173,31 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
                 });
     }
 
-    private void fillAdapter(List<VkFeedPost> posts, boolean refresh) {
-        if (posts == null) {
+    private void fillAdapter(VkNewsFeedResponse response, boolean refresh) {
+        if (response.getPosts() == null) {
             return;
         }
         List<PostEntity> postsList = new ArrayList<>();
-        for (VkFeedPost vkWallPost : posts) {
+        for (VkFeedPost vkFeedPost : response.getPosts()) {
             PostEntity postEntity = new PostEntity();
-            String date = getFormattedDateTime(vkWallPost.getDate() * 1000);
+            long dateMillis = (long) vkFeedPost.getDate() * 1000;
+            String date = getFormattedDateTime(dateMillis);
             postEntity.setDate(date);
-            postEntity.setContent(vkWallPost.getText());
+            postEntity.setContent(vkFeedPost.getText());
             postsList.add(postEntity);
+            if (vkFeedPost.getSourceId() < 0) {
+                VkGroupProfile groupProfile = (VkGroupProfile) findProfile(vkFeedPost.getSourceId() * (-1), response.getGroupProfiles());
+                if (groupProfile != null) {
+                    postEntity.setAvatarUrl(groupProfile.getAvatarUrl());
+                    postEntity.setAuthor(groupProfile.getName());
+                }
+            } else {
+                VkUserProfile userProfile = (VkUserProfile) findProfile(vkFeedPost.getSourceId(), response.getProfiles());
+                if (userProfile != null) {
+                    postEntity.setAvatarUrl(userProfile.getAvatarUrl());
+                    postEntity.setAuthor(String.format(Locale.getDefault(), "%s %s", userProfile.getFirstName(), userProfile.getLastName()));
+                }
+            }
         }
         if (refresh) {
             mNewsAdapter.setData(postsList);
@@ -188,8 +206,17 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
         }
     }
 
+    private VkProfile findProfile(int id, List<? extends VkProfile> profiles) {
+        for (VkProfile profile : profiles) {
+            if (profile.getId() == id) {
+                return profile;
+            }
+        }
+        return null;
+    }
+
     private String getFormattedDateTime(long millis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MM yy HH:mm", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         Date date = new Date(millis);
         return sdf.format(date);
     }
