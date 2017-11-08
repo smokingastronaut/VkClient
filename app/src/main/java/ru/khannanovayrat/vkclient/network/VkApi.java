@@ -23,4 +23,12 @@ public interface VkApi {
 
     @GET("newsfeed.get?PARAMETERS&v=5.69")
     Observable<VkNewsFeedResponseWrapper> getNewsFeed(@Query("access_token") String token);
+
+    @GET("wall.getById?PARAMETERS&v=5.69")
+    Observable<VkWallPostResponseWrapper> getPostsById(@Query("access_token") String token, @Query("posts") String... postId);
+
+    @GET("users.get?PARAMETERS&v=5.69")
+    Observable<VkUserProfile> getUserById(@Query("access_token") String token,
+                                          @Query("user_ids") String userId,
+                                          @Query("fields") String... additionalFields);
 }

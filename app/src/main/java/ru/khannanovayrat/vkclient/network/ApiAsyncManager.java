@@ -12,6 +12,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.khannanovayrat.vkclient.network.attachment.VkAttachment;
+import ru.khannanovayrat.vkclient.network.attachment.VkAttachmentDeserializer;
 import ru.khannanovayrat.vkclient.network.feed.VkNewsFeedResponseWrapper;
 import ru.khannanovayrat.vkclient.network.wall.VkWallPostResponseDeserializer;
 import ru.khannanovayrat.vkclient.network.wall.response.VkWallPostResponse;
@@ -37,6 +39,7 @@ public class ApiAsyncManager {
         GsonConverterFactory converterFactory = GsonConverterFactory.create(
                 new GsonBuilder()
                         .registerTypeAdapter(VkWallPostResponse.class, new VkWallPostResponseDeserializer())
+                        .registerTypeAdapter(VkAttachment.class, new VkAttachmentDeserializer())
                         .create());
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL)
@@ -59,12 +62,25 @@ public class ApiAsyncManager {
                 .getNewsFeed(getToken())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
-
     }
 
     public Observable<VkNewsFeedResponseWrapper> getFeedFrom(String postId) {
         return mVkApi
                 .getNewsFeedFrom(postId, getToken())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<VkWallPostResponseWrapper> getPostsById(String... postsId) {
+        return mVkApi
+                .getPostsById(getToken(), postsId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<VkUserProfile> getUserById(String userId) {
+        return mVkApi
+                .getUserById(getToken(), userId, "photo_100")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
 

@@ -13,9 +13,7 @@ import android.view.MenuItem;
 
 import com.vk.sdk.VKSdk;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,9 +28,13 @@ import ru.khannanovayrat.vkclient.network.VkUserProfile;
 import ru.khannanovayrat.vkclient.network.feed.VkFeedPost;
 import ru.khannanovayrat.vkclient.network.feed.VkNewsFeedResponse;
 import ru.khannanovayrat.vkclient.network.feed.VkNewsFeedResponseWrapper;
+import ru.khannanovayrat.vkclient.newsletter.detail.PostDetailsActivity;
+import ru.khannanovayrat.vkclient.util.PostUtils;
 import ru.khannanovayrat.vkclient.util.PreferenceUtils;
 
-public class NewsletterActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+import static ru.khannanovayrat.vkclient.util.PostUtils.getPhotoAttachments;
+
+public class NewsletterActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NewsletterAdapter.OnNewsItemClickListener {
 
     private RecyclerView mNewsRecyclerView;
     private NewsletterAdapter mNewsAdapter;
@@ -72,7 +74,7 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
                 }
             }
         });
-        mNewsAdapter = new NewsletterAdapter();
+        mNewsAdapter = new NewsletterAdapter(this);
         mNewsRecyclerView.setAdapter(mNewsAdapter);
         loadFeed();
     }
@@ -102,6 +104,11 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
         loadFeed();
     }
 
+    @Override
+    public void onClick(PostEntity postEntity) {
+        startDetailActivity(postEntity.getPostId());
+    }
+
     private void checkLoginState() {
         if (!VKSdk.isLoggedIn()) {
             redirectToLogin();
@@ -111,6 +118,10 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
     private void redirectToLogin() {
         startActivity(LoginActivity.newIntent(this));
         finish();
+    }
+
+    private void startDetailActivity(String postId) {
+        startActivity(PostDetailsActivity.newIntent(this, postId));
     }
 
     private void loadFeed() {
@@ -180,8 +191,11 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
         List<PostEntity> postsList = new ArrayList<>();
         for (VkFeedPost vkFeedPost : response.getPosts()) {
             PostEntity postEntity = new PostEntity();
+            postEntity.setPostId(getPostId(vkFeedPost));
+            postEntity.setAttachments(getPhotoAttachments(vkFeedPost.getAttachments()));
+            postEntity.setLikes(vkFeedPost.getLikes());
             long dateMillis = (long) vkFeedPost.getDate() * 1000;
-            String date = getFormattedDateTime(dateMillis);
+            String date = PostUtils.getFormattedDateTime(dateMillis);
             postEntity.setDate(date);
             postEntity.setContent(vkFeedPost.getText());
             postsList.add(postEntity);
@@ -215,11 +229,11 @@ public class NewsletterActivity extends AppCompatActivity implements SwipeRefres
         return null;
     }
 
-    private String getFormattedDateTime(long millis) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        Date date = new Date(millis);
-        return sdf.format(date);
+
+    private String getPostId(VkFeedPost feedPost) {
+        return String.format("%s_%s", feedPost.getSourceId(), feedPost.getPostId());
     }
+
 
     private void showProgress(boolean show) {
         mSwipeRefreshLayout.setRefreshing(show);
